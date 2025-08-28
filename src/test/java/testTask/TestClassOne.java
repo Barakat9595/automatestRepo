@@ -3,18 +3,29 @@ package testTask;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+import java.time.Duration;
+
 
 public class TestClassOne {
+    WebDriver driver;
+    @BeforeMethod
+    public void setUp()
+    {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get("https://duckduckgo.com/");
+    }
     @Test
     public void taskProblemOne (){
         SoftAssert softAssert = new SoftAssert();
-        WebDriver driver = new EdgeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://duckduckgo.com/");
-        softAssert.assertEquals(driver.getTitle(),"Goodle");
+        softAssert.assertEquals(driver.getTitle(),"Google");
         softAssert.assertAll();
         driver.quit();
 
@@ -24,31 +35,39 @@ public class TestClassOne {
     public void taskProblemTwo()
     {
         SoftAssert softAssert = new SoftAssert();
-        WebDriver driver = new EdgeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://duckduckgo.com/");
-        WebElement logo = driver.findElement(By.cssSelector(""));
+        By logo = By.xpath("//*[@id=\"__next\"]/div/main/article/div[1]/div[1]/div[2]/div/header/div/section[1]/a/img");
 
-        boolean isDisplayed = logo.isDisplayed();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement waitedLogo = wait.until(ExpectedConditions.visibilityOfElementLocated(logo));
+        boolean isDisplayed = waitedLogo.isDisplayed();
         softAssert.assertTrue(isDisplayed);
         softAssert.assertAll();
         driver.quit();
     }
     @Test
-    public void taskProblemThree()
-    {
+    public void taskProblemThree(){
         SoftAssert softAssert = new SoftAssert();
-        WebDriver driver = new EdgeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://duckduckgo.com/");
         By searchBar = By.id("searchbox_input");
-        By firstResult = By.xpath("//*[@id=\"r1-0\"]/div[3]/h2/a/span");
-        driver.findElement(searchBar).sendKeys("Selenium WebDriver");
-        driver.findElement(firstResult).click();
+        By searchBtn = By.xpath("//button[@aria-label='Search']");
+        By firstResult = By.xpath("//span[text()='WebDriver - Selenium']");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+       WebElement waitedBar = wait.until(ExpectedConditions.visibilityOfElementLocated(searchBar));
+       // a jump over to the assertion then to the quit. (solved when each waitedElement is before it's interaction
+
+       waitedBar.sendKeys("Selenium WebDriver");
+        WebElement waitedSearchBtn =  wait.until(ExpectedConditions.presenceOfElementLocated(searchBtn));
+       waitedSearchBtn.click();
+        WebElement waitedResult = wait.until(ExpectedConditions.presenceOfElementLocated(firstResult));
+       waitedResult.click();
+
         String URL = driver.getCurrentUrl();
         softAssert.assertEquals(URL, "https://www.selenium.dev/documentation/webdriver/");
         softAssert.assertAll();
-        driver.quit();
 
+    }
+    @AfterMethod
+    public void quit()
+    {
+        driver.quit();
     }
 }
