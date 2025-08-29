@@ -27,7 +27,6 @@ public class TestClassOne {
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(driver.getTitle(),"Google");
         softAssert.assertAll();
-        driver.quit();
 
     }
 
@@ -42,7 +41,6 @@ public class TestClassOne {
         boolean isDisplayed = waitedLogo.isDisplayed();
         softAssert.assertTrue(isDisplayed);
         softAssert.assertAll();
-        driver.quit();
     }
     @Test
     public void taskProblemThree(){
@@ -68,6 +66,6 @@ public class TestClassOne {
     @AfterMethod
     public void quit()
     {
-        driver.quit();
+        driver.quit(); //quit can be before soft assert to pass all the statementss before running assertion
     }
 }
